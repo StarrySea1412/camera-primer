@@ -206,20 +206,28 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;b
     </div>
     <div class="prose"><p>妙事发生在高速快门：1/8000 秒比帘幕跑完全画面的时间还短，后帘没等前帘到位就得出发——于是曝光发生在一条<b>窄缝扫过传感器</b>的过程中。这也是为什么高速快门拍飞机螺旋桨会「切」出诡异的弯曲叶片：照片不是「一瞬间」，而是一条缝扫完的「一小段时间」。</p></div>
     <div class="demo">
-      <div class="demo-head"><span class="demo-tag">互动 03 · 焦平面快门</span><span class="demo-title">按下去，看帘幕跑一趟<span class="hint">拖速度 + 点拍摄</span></span></div>
+      <div class="demo-head"><span class="demo-tag">互动 03 · 焦平面快门</span><span class="demo-title">按下去，对比「现场」和「拍到的」<span class="hint">拖速度 + 点拍摄</span></span></div>
       <div class="demo-body">
-        <div class="stage"><svg id="sh-svg" viewBox="0 0 720 260" role="img" aria-label="焦平面快门帘幕运动示意"></svg></div>
+        <div class="stage" style="display:grid;grid-template-columns:1fr 250px">
+          <svg id="sh-svg" viewBox="0 0 440 300" role="img" aria-label="焦平面快门帘幕运动示意"></svg>
+          <div style="border-left:1px solid #2b2a27;padding:12px;display:flex;flex-direction:column;gap:8px">
+            <div style="font-family:var(--mono);font-size:9.5px;color:#8a887f">被摄物体：旋转中的风扇</div>
+            <svg id="sh-fan" viewBox="0 0 226 110" style="background:#12110f;border-radius:6px"></svg>
+            <div style="font-family:var(--mono);font-size:9.5px;color:#8a887f">传感器拍到的照片</div>
+            <canvas id="sh-res" width="226" height="140" style="width:100%;border-radius:6px;display:block;background:#0c0b0a"></canvas>
+          </div>
+        </div>
         <div class="controls">
-          <div class="ctl"><label>快门速度<b id="sh-sv">1/125 s</b></label><input type="range" id="sh-s" min="0" max="10" step="1" value="5"/></div>
+          <div class="ctl"><label>快门速度<b id="sh-sv">1/125 s</b></label><input type="range" id="sh-s" min="0" max="10" step="1" value="4"/></div>
           <div class="ctl" style="flex:0 0 auto"><label style="margin-bottom:7px">动作</label><button class="btn" id="sh-fire">咔嚓 · 拍一张</button></div>
         </div>
         <div class="readout">
-          <div class="rd">曝光方式<b id="sh-r1">全画面同时</b></div>
+          <div class="rd">曝光方式<b id="sh-r1">—</b></div>
           <div class="rd">缝隙宽度<b id="sh-r2">—</b></div>
-          <div class="rd">快门声<b>前帘「嚓」+ 后帘「嚓」</b></div>
+          <div class="rd">拍到的结果<b id="sh-r3" class="hot">还没拍</b></div>
         </div>
       </div>
-      <div class="demo-foot">帘幕行程按 24ms（真实相机前帘行程约 2–4ms/画幅，此处放慢演示）模拟；速度档 1s → 1/8000s。慢门下全画面同曝，高速下只有一条窄缝扫过——轨迹上的物体被「切开」。</div>
+      <div class="demo-foot">帘幕行程按真实 24ms 放慢成 1.6s 演示。风扇一直在转（约 4 圈/秒）：<b>慢门</b>全画面长时间感光 → 扇叶糊成一圈残影；<b>高速</b>后帘紧追前帘，一条窄缝从上往下扫——每一行像素采样的瞬间都差一点，叶片就被「切」弯了（rolling shutter）。</div>
     </div>
   </div>
 </section>
@@ -493,78 +501,133 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
   draw();
 })();
 
-/* ═══ 03 快门 ═══ */
+/* ═══ 03 快门（帘幕 + 旋转风扇 + rolling shutter 结果帧）═══ */
 (() => {
   const svg = $("#sh-svg");
   if (!svg) return;
-  const FX = 90, FY = 40, FW = 300, FH = 180;      // 传感器框
+  const FX = 40, FY = 40, FW = 360, FH = 210;
   const SPEEDS = ["1s", "1/8 s", "1/30 s", "1/60 s", "1/125 s", "1/250 s", "1/500 s", "1/1000 s", "1/2000 s", "1/4000 s", "1/8000 s"];
   const SECS = [1, 0.125, 1 / 30, 1 / 60, 1 / 125, 1 / 250, 1 / 500, 1 / 1000, 1 / 2000, 1 / 4000, 1 / 8000];
-  const TRAVEL = 1.6;   // 帘幕走完一程的演示秒数（真实 2–4ms，放慢演示）
-  el("rect", { x: 0, y: 0, width: 720, height: 260, fill: "#171614" }, svg);
-  el("text", { x: FX, y: 30, fill: "#8a887f", "font-size": 11, "font-family": "monospace" }, svg).textContent = "传感器（成像面）";
-  el("text", { x: FX + FW + 24, y: 30, fill: "#8a887f", "font-size": 11, "font-family": "monospace" }, svg).textContent = "运动物体：扇叶";
-  // 传感器框 + 感光底
-  const glow = el("rect", { x: FX, y: FY, width: FW, height: FH, fill: "rgba(240,200,106,.22)" }, svg);
+  const TRAVEL = 1.6, REAL_TRAVEL = 0.024, OMEGA = 1440 * Math.PI / 180;
+  el("rect", { x: 0, y: 0, width: 440, height: 300, fill: "#171614" }, svg);
+  el("text", { x: FX, y: 28, fill: "#8a887f", "font-size": 11, "font-family": "monospace" }, svg).textContent = "传感器（成像面）";
+  const glow = el("rect", { x: FX, y: FY, width: FW, height: FH, fill: "rgba(240,200,106,.25)" }, svg);
   el("rect", { x: FX, y: FY, width: FW, height: FH, fill: "none", stroke: "#4a4844", "stroke-width": 2.5 }, svg);
   for (let i = 1; i < 6; i++) el("line", { x1: FX, y1: FY + FH / 6 * i, x2: FX + FW, y2: FY + FH / 6 * i, stroke: "rgba(255,255,255,.04)" }, svg);
-  // 风扇（演示高速快门切分运动）
-  const fan = el("g", {}, svg);
-  const fanBlades = [];
-  for (let i = 0; i < 3; i++) fanBlades.push(el("path", { d: "M0 -8 Q34 -34 52 -6 Q30 6 0 8 Z", fill: "#c9c4b4" }, fan));
-  el("circle", { cx: 0, cy: 0, r: 7, fill: "#4a4844" }, fan);
-  fan.setAttribute("transform", `translate(${FX + FW + 110} ${FY + FH / 2})`);
-  const cutLabel = el("text", { x: FX + FW + 52, y: FY + FH - 8, fill: "#8a887f", "font-size": 10, "font-family": "monospace" }, svg);
-  // 帘幕
-  const front = el("rect", { x: FX, y: FY, width: FW, height: 0, fill: "#111008", stroke: "#2c2b27", "stroke-width": 1.5 }, svg);
-  const back = el("rect", { x: FX, y: FY, width: FW, height: FH, fill: "#111008", stroke: "#2c2b27", "stroke-width": 1.5 }, svg);
-  const frontLabel = el("text", { x: FX - 8, y: FY + 12, fill: "#c9c4b4", "font-size": 10, "font-family": "monospace", "text-anchor": "end" }, svg);
+  const front = el("rect", { x: FX, y: FY, width: FW, height: 0, fill: "#141310", stroke: "#3c3b37", "stroke-width": 1.5 }, svg);
+  const back = el("rect", { x: FX, y: FY, width: FW, height: FH, fill: "#141310", stroke: "#3c3b37", "stroke-width": 1.5 }, svg);
+  const frontLabel = el("text", { x: FX - 8, y: FY + 14, fill: "#c9c4b4", "font-size": 10.5, "font-family": "monospace", "text-anchor": "end", opacity: 0 }, svg);
   frontLabel.textContent = "前帘";
-  const backLabel = el("text", { x: FX - 8, y: FY + 12, fill: "#8a887f", "font-size": 10, "font-family": "monospace", "text-anchor": "end" }, svg);
+  const backLabel = el("text", { x: FX - 8, y: FY + 14, fill: "#8a887f", "font-size": 10.5, "font-family": "monospace", "text-anchor": "end" }, svg);
   backLabel.textContent = "后帘";
-  const slitLabel = el("text", { x: FX + FW / 2, y: FY - 8, fill: "#f0c86a", "font-size": 10.5, "font-family": "monospace", "text-anchor": "middle" }, svg);
-  const caption = el("text", { x: 360, y: 246, fill: "#a5a294", "font-size": 11.5, "font-family": "monospace", "text-anchor": "middle" }, svg);
-  let anim = null;
-  function speedInfo() {
-    const i = +$("#sh-s").value;
-    return { label: SPEEDS[i], sec: SECS[i] };
+  const slitLabel = el("text", { x: FX + FW / 2, y: FY - 10, fill: "#f0c86a", "font-size": 10.5, "font-family": "monospace", "text-anchor": "middle" }, svg);
+  const caption = el("text", { x: 220, y: 284, fill: "#a5a294", "font-size": 11, "font-family": "monospace", "text-anchor": "middle" }, svg);
+  const fanSvg = $("#sh-fan");
+  const fan = el("g", {}, fanSvg);
+  const fanBlades = [];
+  for (let i = 0; i < 3; i++) {
+    fanBlades.push(el("path", { d: "M0 -10 Q40 -40 62 -8 Q36 8 0 10 Z", fill: i % 2 ? "#cfcaba" : "#c1bcab", stroke: "#43423c", "stroke-width": 1, transform: "rotate(" + i * 120 + ")" }, fan));
   }
+  el("circle", { cx: 0, cy: 0, r: 9, fill: "#57554e" }, fan);
+  el("circle", { cx: 0, cy: 0, r: 3.5, fill: "#c04632" }, fan);
+  fan.setAttribute("transform", "translate(113 55)");
+  const res = $("#sh-res");
+  const rctx = res.getContext("2d");
+  const off = document.createElement("canvas");
+  off.width = res.width; off.height = res.height;
+  const octx = off.getContext("2d");
+  function drawProp(angle) {
+    octx.clearRect(0, 0, off.width, off.height);
+    octx.save();
+    octx.translate(off.width / 2, off.height / 2);
+    octx.rotate(angle);
+    for (let i = 0; i < 3; i++) {
+      octx.save();
+      octx.rotate(i * 2 * Math.PI / 3);
+      octx.beginPath();
+      octx.moveTo(0, -12);
+      octx.quadraticCurveTo(52, -52, 82, -10);
+      octx.quadraticCurveTo(44, 10, 0, 12);
+      octx.closePath();
+      octx.fillStyle = "#cfcaba";
+      octx.fill();
+      octx.restore();
+    }
+    octx.beginPath(); octx.arc(0, 0, 11, 0, 7); octx.fillStyle = "#57554e"; octx.fill();
+    octx.beginPath(); octx.arc(0, 0, 4, 0, 7); octx.fillStyle = "#c04632"; octx.fill();
+    octx.restore();
+  }
+  function capture(sec) {
+    const W = res.width, H = res.height;
+    rctx.fillStyle = "#0c0b0a"; rctx.fillRect(0, 0, W, H);
+    const baseAngle = 0.7;
+    if (sec >= REAL_TRAVEL) {
+      const span = OMEGA * sec;
+      const K = Math.max(6, Math.min(42, Math.round(span / (Math.PI / 9))));
+      for (let k = 0; k < K; k++) {
+        const t = k / (K - 1) * sec;
+        drawProp(baseAngle + OMEGA * t);
+        rctx.save();
+        rctx.globalAlpha = 0.16 / Math.pow(K / 12, 0.6);
+        rctx.drawImage(off, 0, 0);
+        rctx.restore();
+      }
+      return sec >= 0.5 ? "整圈残影（长曝光）" : "扇形残影（运动模糊）";
+    }
+    const rowH = 2;
+    for (let y = 0; y < H; y += rowH) {
+      const tRow = (y / H) * REAL_TRAVEL;
+      drawProp(baseAngle + OMEGA * (sec + tRow));
+      rctx.drawImage(off, 0, y, W, rowH, 0, y, W, rowH);
+    }
+    return "叶片被切弯（rolling shutter）";
+  }
+  let anim = null, fanAngle = 0, lastT = 0;
+  function fanLoop(now) {
+    if (!lastT) lastT = now;
+    fanAngle += (now - lastT) / 1000 * OMEGA * 0.35;
+    lastT = now;
+    fan.setAttribute("transform", "translate(113 55) rotate(" + (fanAngle * 180 / Math.PI % 360) + ")");
+    requestAnimationFrame(fanLoop);
+  }
+  requestAnimationFrame(fanLoop);
+  function speedInfo() { const i = +$("#sh-s").value; return { label: SPEEDS[i], sec: SECS[i] }; }
   function idle() {
     const { label, sec } = speedInfo();
-    front.setAttribute("height", 0);
-    back.setAttribute("height", FH);
+    front.setAttribute("height", 0); front.setAttribute("y", FY);
+    back.setAttribute("y", FY); back.setAttribute("height", FH);
     glow.setAttribute("opacity", 0);
+    frontLabel.setAttribute("opacity", 0);
+    backLabel.setAttribute("y", FY + 14);
     slitLabel.textContent = "";
-    caption.textContent = "待命：后帘盖住传感器，前帘收起。曝光 = 前帘打开 →（时间差）→ 后帘跟上。";
-    const gapPct = Math.min(100, sec / 0.024 * 100);
-    $("#sh-r1").textContent = gapPct >= 100 ? "全画面同时（长曝光）" : `一条 ${Math.max(4, Math.round(gapPct / 100 * FH))}px 的缝扫过`;
-    $("#sh-r2").textContent = gapPct >= 100 ? "—（后帘等前帘到位后才出发）" : Math.round(gapPct / 100 * FH) + " px";
-    fanBlades.forEach((b, k) => { b.setAttribute("opacity", sec <= 1 / 1000 ? 0.35 : 1); });
-    cutLabel.textContent = sec <= 1 / 1000 ? "↑ 高速快门把旋转扇叶「切」弯了" : "";
+    caption.textContent = "待命：后帘盖住传感器。按「咔嚓」对比右边的现场和拍到的照片。";
+    const gapPct = Math.min(100, sec / REAL_TRAVEL * 100);
+    $("#sh-r1").textContent = gapPct >= 100 ? "全画面同时（长曝光）" : "一条 " + Math.max(4, Math.round(gapPct / 100 * FH)) + "px 的缝扫过";
+    $("#sh-r2").textContent = gapPct >= 100 ? "—（后帘等前帘到位才出发）" : Math.round(gapPct / 100 * FH) + " px";
   }
   function fire() {
     if (anim) return;
     const { sec } = speedInfo();
-    const delay = Math.min(TRAVEL, sec / 0.024 * TRAVEL);   // 后帘出发的演示延迟
+    const delay = Math.min(TRAVEL, sec / REAL_TRAVEL * TRAVEL);
     const t0 = performance.now();
-    glow.setAttribute("opacity", 0.9);
-    caption.textContent = sec >= 0.125
-      ? "长曝光：前帘完全打开，停留，再由后帘收回——全画面同时感光。"
-      : "高速：后帘紧追前帘，曝光发生在一条窄缝扫过的过程中。";
+    let captured = false;
+    glow.setAttribute("opacity", 0.85);
+    caption.textContent = sec >= 0.125 ? "长曝光：前帘全开，停留，后帘收回——全画面同时感光。" : "高速：后帘紧追前帘，一条窄缝扫过传感器。";
     function step(now) {
       const t = (now - t0) / 1000;
       const frontY = Math.min(FH, t / TRAVEL * FH);
-      front.setAttribute("y", FY);
-      front.setAttribute("height", frontY);
-      frontLabel.setAttribute("y", FY + Math.min(frontY + 12, FH));
+      front.setAttribute("y", FY); front.setAttribute("height", frontY);
+      frontLabel.setAttribute("y", FY + Math.min(frontY + 14, FH + 10));
+      frontLabel.setAttribute("opacity", frontY > 8 ? 1 : 0);
       const backY = Math.min(FH, Math.max(0, (t - delay) / TRAVEL * FH));
-      back.setAttribute("y", FY + backY);
-      back.setAttribute("height", FH - backY);
-      backLabel.setAttribute("y", FY + backY + 12);
-      // 风扇转动
-      const rot = sec <= 1 / 500 ? "none" : `rotate(${t * 220 % 360})`;
-      fanBlades.forEach((b) => b.setAttribute("transform", rot));
-      if (t < TRAVEL + delay + 0.35) anim = requestAnimationFrame(step);
+      back.setAttribute("y", FY + backY); back.setAttribute("height", FH - backY);
+      backLabel.setAttribute("y", FY + backY + 14);
+      slitLabel.textContent = (t > delay * 0.9 && t < delay + TRAVEL) ? "← 曝光缝隙 →" : "";
+      if (t >= delay + TRAVEL && !captured) {
+        captured = true;
+        $("#sh-r3").textContent = capture(sec);
+      }
+      if (t < TRAVEL + delay + 0.3) anim = requestAnimationFrame(step);
       else { anim = null; idle(); }
     }
     anim = requestAnimationFrame(step);
@@ -573,8 +636,8 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
   $("#sh-fire").addEventListener("click", fire);
   $("#sh-sv").textContent = speedInfo().label;
   idle();
+  $("#sh-r3").textContent = capture(1 / 500);
 })();
-
 /* ═══ 04 ISO ═══（真实照片引擎） */
 (() => {
   const cv = $("#iso-cv");
