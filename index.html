@@ -45,7 +45,13 @@ p{margin:0 0 1.15em}
 .edition{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;display:flex;gap:12px;align-items:center}
 
 /* hero */
-.hero{padding-block:46px 34px;display:grid;grid-template-columns:1fr;gap:30px}
+.hero{padding-block:46px 34px;display:grid;grid-template-columns:1.02fr .98fr;gap:34px;align-items:center}
+.screen{border:2px solid var(--black);border-radius:14px;background:var(--card);padding:10px;box-shadow:7px 7px 0 rgba(60,58,50,.18)}
+.screen .shot{border-radius:8px;overflow:hidden;background:#171614}
+.screen .shot img{display:block;width:100%;aspect-ratio:1152/832;object-fit:cover}
+.screen .tc{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted);padding:8px 3px 2px}
+.screen .tc .red{color:var(--red);font-weight:700}
+@media (max-width:900px){.hero{grid-template-columns:1fr}}
 .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;color:var(--muted);margin:0 0 18px;background:var(--card);border:1.5px solid var(--line-strong);padding:6px 13px;border-radius:999px;width:fit-content}
 .eyebrow b{color:var(--red);letter-spacing:.14em}
 .hero h1{font-size:clamp(36px,5.4vw,62px);line-height:1.16;letter-spacing:-.02em;margin:0 0 16px;font-weight:800}
@@ -117,6 +123,10 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;b
       <span class="pill">零依赖 · 单文件</span>
     </div>
   </div>
+  <figure class="screen" style="margin:0">
+    <div class="shot"><img src="assets/img/hero.webp" alt="单眼折纸鸟摄影师举起老式旁轴相机在取景" width="1152" height="832"/></div>
+    <div class="tc"><span>OPTICAL PRIMER · NO.1</span><span class="red">● EXPOSURE READY</span></div>
+  </figure>
 </section>
 
 <section class="sect" id="s1">
@@ -166,8 +176,9 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;b
       <div class="demo-body">
         <div class="stage" style="display:grid;grid-template-columns:1fr 210px;gap:0;background:#171614">
           <svg id="ap-svg" viewBox="0 0 380 300" role="img" aria-label="光圈叶片开合动画"></svg>
-          <div style="padding:14px;border-left:1px solid #2b2a27">
-            <svg id="ap-dof" viewBox="0 0 180 240" role="img" aria-label="景深示意"></svg>
+          <div style="padding:12px;border-left:1px solid #2b2a27;display:flex;flex-direction:column;gap:8px">
+            <canvas id="ap-dof" width="420" height="520" style="width:100%;border-radius:6px;display:block"></canvas>
+            <div style="font-family:var(--mono);font-size:9.5px;color:#8a887f;line-height:1.6">焦点锁定主体 · 光圈越大，前后化得越开</div>
           </div>
         </div>
         <div class="controls">
@@ -264,7 +275,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;b
           <div class="rd">换算口诀<b>任一旋钮 ×2 = 明亮一档</b></div>
         </div>
       </div>
-      <div class="demo-foot">场景亮度按「进光量 = 孔面积 × 时间 × 增益」计算并归一到 EV；拖影提示在快门慢于 1/30s 时出现（手持安全线），噪点在 ISO ≥ 3200 可见——三个代价同屏演示。</div>
+      <div class="demo-foot">场景亮度按「进光量 = 孔面积 × 时间 × 增益」计算并归一到 EV；抖动重影在快门慢于 1/30s 时出现（手持安全线），噪点在 ISO ≥ 3200 可见——三个代价同屏演示。</div>
     </div>
   </div>
 </section>
@@ -281,7 +292,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;b
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px" id="cheat">
         <div style="border:2px solid var(--black);border-radius:10px;background:var(--card);padding:14px 16px;box-shadow:var(--hard)"><b style="color:var(--red)">① 想要虚化背景</b><p style="margin:6px 0 0;font-size:13.5px">光圈开大（小 f 值），长焦，靠近主体——三者都让景深变浅。</p></div>
         <div style="border:2px solid var(--black);border-radius:10px;background:var(--card);padding:14px 16px;box-shadow:var(--hard)"><b style="color:var(--red)">② 想拍清高速运动</b><p style="margin:6px 0 0;font-size:13.5px">快门快于 1/500s；光线不够就拿 ISO 换——噪点总比糊了好。</p></div>
-        <div style="border:2px solid var(--black);border-radius:10px;background:var(--card);padding:14px 16px;box-shadow:var(--hard)"><b style="color:var(--red)">③ 想拍丝滑流水</b><p style="margin:6px 0 0;font-size:13.5px">快门放慢到 1s 级，光圈缩到 f/11，上三脚架——注意 nd 减光镜。</p></div>
+        <div style="border:2px solid var(--black);border-radius:10px;background:var(--card);padding:14px 16px;box-shadow:var(--hard)"><b style="color:var(--red)">③ 想拍丝滑流水</b><p style="margin:6px 0 0;font-size:13.5px">快门放慢到 1s 级，光圈缩到 f/11，务必上三脚架——流水丝滑要 ND 减光镜。</p></div>
         <div style="border:2px solid var(--black);border-radius:10px;background:var(--card);padding:14px 16px;box-shadow:var(--hard)"><b style="color:var(--red)">④ 拿不准就先保快门</b><p style="margin:6px 0 0;font-size:13.5px">手持安全线 ≈ 1/焦距秒（50mm 用 1/50s）；糊了的照片光圈再好也没救。</p></div>
       </div>
       <p style="margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--faint)">一台相机的全部秘密：把暗箱做小、把孔做成会呼吸的、把墙做成会数光子的。剩下的都是手艺。—— 光学手册 · 完</p>
@@ -291,7 +302,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;b
 
 <footer class="wrap" style="border-top:1.5px solid var(--line-strong);margin-top:34px;padding-block:20px 40px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em">
   <div>光学手册 · 咔嚓！光是怎么变成照片的</div>
-  <div>单文件 · 零依赖 · 交互均为确定性模拟 · StarrySea1412 / 2026</div>
+  <div>单文件 · 零依赖 · 交互确定性模拟 · 实拍感照片为 GPT 系生成素材 · StarrySea1412 / 2026</div>
 </footer>
 <script>
 (() => {
@@ -437,28 +448,46 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
     $("#ap-r2").textContent = i <= 1 ? "很浅 · 背景化开" : i <= 3 ? "适中" : i <= 5 ? "较深" : "很深 · 前后都清楚";
     drawDof(1 / Math.pow(2, i / 2));
   }
-  const dof = $("#ap-dof");
-  const dofDefs = el("defs", {}, dof);
-  const blurF = el("filter", { id: "ap-blur", x: "-20%", y: "-20%", width: "140%", height: "140%" }, dofDefs);
-  el("feGaussianBlur", { id: "ap-blur-g", stdDeviation: 4 }, blurF);
-  const dofBody = el("g", {}, dof);
-  function drawDof(b) {
-    dofBody.innerHTML = "";
-    const g1 = el("g", { filter: "url(#ap-blur)" }, dofBody);
-    el("rect", { x: 0, y: 0, width: 180, height: 240, fill: "#1d1c1a" }, g1);
-    el("circle", { cx: 40, cy: 46, r: 22, fill: "#3a4a58" }, g1);          // 远景灯
-    el("rect", { x: 118, y: 30, width: 44, height: 66, rx: 4, fill: "#33413c" }, g1);
-    el("path", { d: "M150 96 L166 150 L134 150 Z", fill: "#3d4a40" }, g1);   // 远景树
-    el("rect", { x: 0, y: 170, width: 180, height: 70, fill: "#243026" }, dofBody);
-    // 焦平面主体（清晰）
-    el("circle", { cx: 90, cy: 130, r: 30, fill: "#c96a3e" }, dofBody);      // 主体
-    el("path", { d: "M74 148 Q90 162 106 148", stroke: "#1d1c1a", "stroke-width": 3, fill: "none" }, dofBody);
-    el("circle", { cx: 79, cy: 122, r: 3.5, fill: "#1d1c1a" }, dofBody);
-    el("circle", { cx: 101, cy: 122, r: 3.5, fill: "#1d1c1a" }, dofBody);
-    el("path", { d: "M66 210 L74 178 L106 178 L114 210 Z", fill: "#2f3b31" }, dofBody);   // 前景（虚化）
-    const g2 = el("g", { filter: "url(#ap-blur)" }, dofBody);
-    el("rect", { x: 0, y: 214, width: 180, height: 26, fill: "#2a352c" }, g2);
-    $("#ap-blur-g").setAttribute("stdDeviation", (b * 7).toFixed(2));
+  const dofCv = $("#ap-dof");
+  const dofCtx = dofCv.getContext("2d");
+  let dofImg = null;
+  const dofPhoto = new Image();
+  dofPhoto.onload = () => { dofImg = dofPhoto; draw(); };
+  dofPhoto.src = "assets/img/dof.jpg";
+  const dofLayer = document.createElement("canvas");
+  dofLayer.width = dofCv.width; dofLayer.height = dofCv.height;
+  const dofLC = dofLayer.getContext("2d");
+  function drawDof(b) {   // b = 0..1 虚化强度（随光圈开大而增大）
+    if (!dofImg) return;
+    const W = dofCv.width, H = dofCv.height;
+    const coverOn = (c2, blurPx) => {
+      const sc = Math.max(W / dofImg.width, H / dofImg.height);
+      const w = dofImg.width * sc, h = dofImg.height * sc;
+      c2.save();
+      if (blurPx > 0.2) c2.filter = "blur(" + blurPx.toFixed(1) + "px)";
+      c2.drawImage(dofImg, (W - w) / 2, (H - h) / 2, w, h);
+      c2.restore();
+    };
+    // 1) 底层：清晰原片
+    dofCtx.clearRect(0, 0, W, H);
+    coverOn(dofCtx, 0);
+    // 2) 虚化层画在离屏画布上，把焦点带挖掉，再叠回主画布
+    dofLC.clearRect(0, 0, W, H);
+    coverOn(dofLC, b * 10);
+    dofLC.save();
+    dofLC.globalCompositeOperation = "destination-out";
+    const bandR = W * (0.20 + (1 - b) * 0.16);
+    const g = dofLC.createRadialGradient(W / 2, H * 0.56, bandR * 0.42, W / 2, H * 0.56, bandR);
+    g.addColorStop(0, "rgba(0,0,0,1)");
+    g.addColorStop(0.72, "rgba(0,0,0,1)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    dofLC.fillStyle = g;
+    dofLC.fillRect(0, 0, W, H);
+    dofLC.restore();
+    dofCtx.drawImage(dofLayer, 0, 0);
+    dofCtx.fillStyle = "rgba(255,255,255,.9)";
+    dofCtx.font = "bold 10px monospace";
+    dofCtx.fillText(b > 0.72 ? "背景化开（浅景深）" : b > 0.4 ? "背景略虚" : "前后都清楚（深景深）", 10, 18);
   }
   $("#ap-f").addEventListener("input", draw);
   draw();
@@ -546,42 +575,18 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
   idle();
 })();
 
-/* ═══ 04 ISO ═══ */
+/* ═══ 04 ISO ═══（真实照片引擎） */
 (() => {
   const cv = $("#iso-cv");
   if (!cv) return;
   const ctx = cv.getContext("2d");
   const ISOS = [100, 200, 400, 800, 1600, 3200, 6400, 12800];
   const NOTES = ["基准 · 底噪最低", "干净", "依然干净", "开始有颗粒", "明显颗粒", "彩色噪点可见", "暗部开始糊", "噪点狂欢 · 暗部细节阵亡"];
-  function drawScene(bright) {
-    ctx.fillStyle = "#1d1c1a"; ctx.fillRect(0, 0, cv.width, cv.height);
-    // 墙
-    const g = ctx.createLinearGradient(0, 0, 0, 300);
-    g.addColorStop(0, `rgb(${34 * bright | 0},${33 * bright | 0},${31 * bright | 0})`);
-    g.addColorStop(1, `rgb(${24 * bright | 0},${23 * bright | 0},${22 * bright | 0})`);
-    ctx.fillStyle = g; ctx.fillRect(0, 0, 856, 300);
-    // 窗与月光
-    ctx.fillStyle = `rgba(150,180,210,${0.5 * bright})`; ctx.fillRect(560, 40, 150, 110);
-    ctx.fillStyle = "#151412"; ctx.fillRect(628, 40, 10, 110); ctx.fillRect(560, 90, 150, 8);
-    // 台灯与光晕
-    const lg = ctx.createRadialGradient(150, 120, 8, 150, 120, 170);
-    lg.addColorStop(0, `rgba(240,200,106,${0.85 * Math.min(1, bright)})`);
-    lg.addColorStop(1, "rgba(240,200,106,0)");
-    ctx.fillStyle = lg; ctx.fillRect(0, 0, 856, 300);
-    ctx.fillStyle = "#c9a44c"; ctx.fillRect(132, 118, 36, 14);
-    ctx.fillStyle = "#3a3936"; ctx.fillRect(146, 132, 8, 60); ctx.fillRect(126, 192, 48, 8);
-    // 沙发
-    ctx.fillStyle = `rgb(${52 * bright | 0},${44 * bright | 0},${38 * bright | 0})`;
-    ctx.fillRect(320, 170, 240, 74); ctx.fillRect(320, 150, 40, 60); ctx.fillRect(520, 150, 40, 60);
-    // 猫
-    ctx.fillStyle = `rgb(${120 * bright | 0},${96 * bright | 0},${72 * bright | 0})`;
-    ctx.beginPath(); ctx.ellipse(430, 196, 44, 24, 0, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.arc(466, 178, 16, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(454, 166); ctx.lineTo(459, 152); ctx.lineTo(466, 164); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(472, 164); ctx.lineTo(478, 151); ctx.lineTo(482, 166); ctx.fill();
-    ctx.strokeStyle = `rgb(${120 * bright | 0},${96 * bright | 0},${72 * bright | 0})`; ctx.lineWidth = 7;
-    ctx.beginPath(); ctx.moveTo(388, 196); ctx.quadraticCurveTo(360, 190, 356, 170); ctx.stroke();
-  }
+  let room = null;
+  const roomImg = new Image();
+  roomImg.onload = () => { room = roomImg; render(); };
+  roomImg.src = "assets/img/room.jpg";
+  const seedBase = 20261106;
   function render() {
     const i = +$("#iso-r").value;
     const iso = ISOS[i];
@@ -590,20 +595,30 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
     $("#iso-r1").textContent = "×" + Math.pow(2, i);
     $("#iso-r2").textContent = ["很低", "低", "低", "可见", "明显", "偏高", "高", "很高"][i];
     $("#iso-r2").className = i >= 4 ? "hot" : "cool";
-    const gain = Math.pow(2, i) * 0.5;
-    drawScene(Math.min(1.6, gain));
-    // 确定性噪点
+    const W = cv.width, H = cv.height;
+    ctx.fillStyle = "#141311"; ctx.fillRect(0, 0, W, H);
+    if (!room) return;
+    // 低 ISO 偏暗（欠曝的原片），拉高 ISO 逐渐提亮：brightness = 0.5 × 1.32^i
+    const bright = Math.min(2.1, 0.5 * Math.pow(1.32, i));
+    const sc = Math.max(W / room.width, H / room.height);
+    const w = room.width * sc, h = room.height * sc;
+    ctx.save();
+    ctx.filter = "brightness(" + bright.toFixed(3) + ")";
+    ctx.drawImage(room, (W - w) / 2, (H - h) / 2, w, h);
+    ctx.restore();
+    // 确定性噪点（真实照片上更接近高感实拍）
     if (i > 0) {
-      seed = 20261106;
-      const img = ctx.getImageData(0, 0, cv.width, cv.height);
+      let sd = seedBase + i;
+      const rnd = () => { sd = (sd * 1103515245 + 12345) & 0x7fffffff; return sd / 0x7fffffff; };
+      const img = ctx.getImageData(0, 0, W, H);
       const d = img.data;
-      const amp = i * 11;
+      const amp = i * 9;
       for (let p = 0; p < d.length; p += 4) {
-        if (srand() < 0.35) {
-          const n = (srand() - 0.5) * amp * 2;
+        if (rnd() < 0.4) {
+          const n = (rnd() - 0.5) * amp * 2;
           d[p] = Math.max(0, Math.min(255, d[p] + n));
-          d[p + 1] = Math.max(0, Math.min(255, d[p + 1] + n * 0.9));
-          d[p + 2] = Math.max(0, Math.min(255, d[p + 2] + n * 1.15));
+          d[p + 1] = Math.max(0, Math.min(255, d[p + 1] + n * 0.85));
+          d[p + 2] = Math.max(0, Math.min(255, d[p + 2] + n * 1.2));
         }
       }
       ctx.putImageData(img, 0, 0);
@@ -612,7 +627,6 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
   $("#iso-r").addEventListener("input", render);
   render();
 })();
-
 /* ═══ 05 曝光三角 ═══ */
 (() => {
   const cv = $("#tri-cv");
@@ -623,39 +637,33 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
   const SECS = [1, 0.125, 1 / 30, 1 / 60, 1 / 125, 1 / 250, 1 / 500, 1 / 1000, 1 / 2000, 1 / 4000, 1 / 8000];
   const ISOS = [100, 200, 400, 800, 1600, 3200, 6400, 12800];
   let seedT = 777;
-  const trand = () => { seedT = (seedT * 1103515245 + 12345) & 0x7fffffff; return seedT / 0x7fffffff; };
-  function scene(bright, noiseAmp, blurCopies) {
+  let room = null;
+  const roomImg = new Image();
+  roomImg.onload = () => { room = roomImg; render(); };
+  roomImg.src = "assets/img/room.jpg";
+  function coverDraw(img, bright, dx, dy, alpha) {
+    const W = cv.width, H = cv.height - 60;
+    const sc = Math.max(W / img.width, H / H);
+    const sc2 = Math.max(W / img.width, (cv.height - 60) / img.height);
+    const w = img.width * sc2, h = img.height * sc2;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    if (bright !== 1) ctx.filter = "brightness(" + bright.toFixed(3) + ")";
+    ctx.drawImage(img, (W - w) / 2 + dx, (H - h) / 2 + dy, w, h);
+    ctx.restore();
+  }
+  function scene(bright, noiseAmp, shakePx) {
     const W = cv.width, H = cv.height - 60;
     ctx.fillStyle = "#141311"; ctx.fillRect(0, 0, W, cv.height);
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    const cl = (v) => Math.max(0, Math.min(255, v * bright | 0));
-    g.addColorStop(0, `rgb(${cl(38)},${cl(37)},${cl(34)})`);
-    g.addColorStop(1, `rgb(${cl(26)},${cl(25)},${cl(23)})`);
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = `rgba(150,180,210,${Math.min(1, 0.55 * bright)})`; ctx.fillRect(590, 30, 170, 120);
-    ctx.fillStyle = "#111009"; ctx.fillRect(668, 30, 10, 120); ctx.fillRect(590, 84, 170, 9);
-    const lg = ctx.createRadialGradient(160, 110, 8, 160, 110, 190);
-    lg.addColorStop(0, `rgba(240,200,106,${Math.min(1, 0.9 * Math.min(1.4, bright))})`);
-    lg.addColorStop(1, "rgba(240,200,106,0)");
-    ctx.fillStyle = lg; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = "#c9a44c"; ctx.fillRect(140, 108, 40, 15);
-    ctx.fillStyle = "#3a3936"; ctx.fillRect(156, 123, 8, 66); ctx.fillRect(134, 189, 52, 9);
-    ctx.fillStyle = `rgb(${cl(58)},${cl(49)},${cl(42)})`;
-    ctx.fillRect(350, 190, 260, 80); ctx.fillRect(350, 168, 44, 66); ctx.fillRect(566, 168, 44, 66);
-    const catFill = `rgb(${cl(128)},${cl(102)},${cl(76)})`;
-    for (let b = blurCopies - 1; b >= 0; b--) {
-      const off = b * 26;
-      const a = b === 0 ? 1 : 0.16;
-      ctx.globalAlpha = a;
-      ctx.fillStyle = catFill;
-      ctx.beginPath(); ctx.ellipse(470 + off, 216, 48, 26, 0, 0, 7); ctx.fill();
-      ctx.beginPath(); ctx.arc(508 + off, 196, 17, 0, 7); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(496 + off, 184); ctx.lineTo(501 + off, 168); ctx.lineTo(509 + off, 182); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(514 + off, 182); ctx.lineTo(521 + off, 167); ctx.lineTo(525 + off, 184); ctx.fill();
-      ctx.lineWidth = 8; ctx.strokeStyle = catFill;
-      ctx.beginPath(); ctx.moveTo(426 + off, 216); ctx.quadraticCurveTo(396 + off, 210, 392 + off, 188); ctx.stroke();
+    if (room) {
+      if (shakePx > 0) {          // 慢门手持：重影抖动
+        coverDraw(room, bright, -shakePx, shakePx * 0.6, 0.3);
+        coverDraw(room, bright, shakePx, -shakePx * 0.5, 0.3);
+      }
+      coverDraw(room, bright, 0, 0, 1);
+    } else {
+      ctx.fillStyle = "#211f1c"; ctx.fillRect(0, 0, W, H);
     }
-    ctx.globalAlpha = 1;
     if (noiseAmp > 0) {
       seedT = 777;
       const img = ctx.getImageData(0, 0, W, cv.height);
@@ -672,13 +680,13 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
     const my = cv.height - 34;
     const gx = (ev) => 60 + (ev + 3) / 6 * (W - 120);
     ctx.fillStyle = "#211f1c"; ctx.fillRect(40, my - 22, W - 80, 44);
+    const zones = [[-3, -1, "rgba(192,70,50,.5)"], [-1, 1, "rgba(63,143,95,.55)"], [1, 3, "rgba(192,70,50,.5)"]];
+    for (const [a, b2, c] of zones) ctx.fillRect(gx(a), my - 22, gx(b2) - gx(a), 44);
     for (let e = -3; e <= 3; e++) {
-      ctx.fillStyle = e === 0 ? "#3f8f5f" : Math.abs(e) === 3 ? "#c04632" : "#79776b";
+      ctx.fillStyle = e === 0 ? "#8fe0b0" : "#e8e4d8";
       ctx.fillRect(gx(e) - 1, my - 14, 2, 28);
     }
-    const zones = [[-3, -1, "rgba(192,70,50,.25)"], [-1, 1, "rgba(63,143,95,.3)"], [1, 3, "rgba(192,70,50,.25)"]];
-    for (const [a, b2, c] of zones) ctx.fillRect(gx(a), my - 22, gx(b2) - gx(a), 44);
-    ctx.font = "10px monospace"; ctx.fillStyle = "#a5a294";
+    ctx.font = "10px monospace"; ctx.fillStyle = "#c9c4b4";
     ctx.fillText("−3", gx(-3) - 6, my + 38); ctx.fillText("0", gx(0) - 3, my + 38); ctx.fillText("+3", gx(3) - 8, my + 38);
     ctx.fillStyle = "#f4f1e8"; ctx.fillText("欠曝", 8, my + 4); ctx.fillText("过曝", W - 34, my + 4);
     return my;
@@ -691,8 +699,9 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
     const light = Math.pow(2, (2 - ai)) * SECS[ti] * Math.pow(2, ii) / (Math.pow(2, 2 - 2) * (1 / 60) * Math.pow(2, 1));
     // 归一：f/4 · 1/60 · ISO400 = EV 0
     const ev = Math.log2(Math.pow(2, (2 - ai)) * SECS[ti] * Math.pow(2, ii) / (1 * (1 / 60) * 2));
-    const bright = Math.pow(2, ev) * 0.62;
-    const my = scene(Math.max(0.06, Math.min(2.4, bright)), ii >= 4 ? (ii - 3) * 10 : 0, SECS[ti] >= 1 / 30 ? 6 : 1);
+    const bright = Math.max(0.14, Math.min(2.2, 0.72 * Math.pow(2, ev)));
+    const shake = SECS[ti] >= 1 ? 13 : SECS[ti] >= 1 / 8 ? 7 : SECS[ti] >= 1 / 30 ? 3.5 : 0;
+    const my = scene(bright, ii >= 4 ? (ii - 3) * 8 : 0, shake);
     // 指针
     const gx = (x) => 60 + (x + 3) / 6 * (cv.width - 120);
     ctx.strokeStyle = "#f4f1e8"; ctx.lineWidth = 3;
@@ -705,7 +714,7 @@ const srand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return se
     el2.textContent = "EV Δ " + (ev >= 0 ? "+" : "") + ev.toFixed(1) + " · " + (clamped > 1 ? "过曝" : clamped < -1 ? "欠曝" : "正确");
     el2.className = clamped > 1 || clamped < -1 ? "hot" : "okc";
     const sides = [];
-    if (SECS[ti] >= 1 / 30 && SECS[ti] < 1) sides.push("慢门 → 手持会糊（猫已拖影）");
+    if (SECS[ti] >= 1 / 30 && SECS[ti] < 1) sides.push("慢门 → 手持会糊（画面已抖动重影）");
     if (SECS[ti] >= 1) sides.push("长曝 → 必须上三脚架");
     if (ai <= 1) sides.push("大光圈 → 背景化开");
     if (ai >= 6) sides.push("小光圈 → 前后都清楚");
